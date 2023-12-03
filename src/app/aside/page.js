@@ -12,7 +12,7 @@ import { MdFavorite } from "react-icons/md";
 import { IoIosSettings } from "react-icons/io";
 import { AiFillMessage } from "react-icons/ai";
 import { useEffect, useState } from "react";
-import { addBlogPost, getSigleUserDetail, getUsers } from "@/Api/firebase/page";
+import { addBlogPost,  getOne,  getUsers } from "@/Api/firebase/page";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function Aside() {
@@ -21,6 +21,7 @@ function Aside() {
   const [allUsers, setAllUSers] = useState([]);
   const [feedImage, setFeedImage] = useState([]);
   const [currentUser, setCurrentUser] = useState("");
+  const [userFullInfo , setUserInfo] = useState("")
   const auth = getAuth();
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -37,8 +38,8 @@ function Aside() {
     });
 
     getallUsers();
-    getSingle();
-  }, [user]);
+    single()
+  }, []);
 
   async function addPost() {
     if (!next || !user) {
@@ -55,21 +56,19 @@ function Aside() {
     setAllUSers(res);
   }
 
-
-
-  
-
   if (!allUsers) {
     return <h3>Loading</h3>;
   }
 
 
-
-  async function getSingle() {
-    const res = await getSigleUserDetail(user.uid);
-    setCurrentUser(res);
-    console.log(currentUser)}
-
+  async  function single(){
+    if(user){
+      const res = await getOne(user.uid)
+      setUserInfo(res)
+    }
+  
+    }
+   
   return (
     <>
       <button
@@ -177,27 +176,25 @@ function Aside() {
               <ul className="max-w-md divide-y divide-gray-200 dark:divide-gray-700">
                 {allUsers.map((item, index) => {
                   return (
-                    <>
-                      <li className="pb-3 sm:pb-4">
-                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                          <div className="flex-shrink-0">
-                            <img
-                              className="w-8 h-8 rounded-full"
-                              src={item.imageURL}
-                              alt="Neil image"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate dark:text-white">
-                              {item.fullName}
-                            </p>
-                            <p className="text-sm text-gray-500 truncate dark:text-gray-400">
-                              {item.uid}
-                            </p>
-                          </div>
+                    <li key={index} className="pb-3 sm:pb-4">
+                      <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                        <div className="flex-shrink-0">
+                          <img
+                            className="w-8 h-8 rounded-full"
+                            src={item.imageURL}
+                            alt="Neil image"
+                          />
                         </div>
-                      </li>
-                    </>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate dark:text-white">
+                            {item.fullName}
+                          </p>
+                          <p className="text-sm text-gray-500 truncate dark:text-gray-400">
+                            {item.uid}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
                   );
                 })}
                 <li className="pb-3 sm:pb-4">

@@ -5,27 +5,35 @@ import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { signOut } from "firebase/auth";
 
-import { app } from "@/Api/firebase/page";
+import { app, getOne } from "@/Api/firebase/page";
 import Aside from "../aside/page";
+import { Single_Day } from "next/font/google";
 export default function Dashboard() {
   const router = useRouter();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState("");
+  const [userFullInfo , setUserInfo] = useState("")
   const auth = getAuth();
 
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+
+  useEffect( () => {
+   onAuthStateChanged(auth, (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/auth.user
         const uid = user.uid;
         setUser(user);
+       single()
+      
+       
+        
 
         // ...
       } else {
         // User is signed out
         // ...
       }
-    });
+    });  
+
   }, [Logout]);
 
   async function Logout() {
@@ -37,6 +45,23 @@ export default function Dashboard() {
         // An error happened.
       });
   }
+
+
+
+async  function single(){
+  if(user){
+    const res = await getOne(user.uid)
+    setUserInfo(res)
+  }
+
+}
+
+
+
+
+
+
+  
   return (
     <div>
       <div className="w-screen items-center bg-white flex">
@@ -102,15 +127,15 @@ export default function Dashboard() {
             </div>
           )}
         </div>
-        {user && (
+        {userFullInfo && (
           <div className="w-auto px-3 mx-auto">
             <div className="flex items-center gap-4">
-              <div className="font-medium dark:text-white">
-                <div>{user.displayName}</div>
+              <div className="font-medium text-blue-500">
+                <div>{userFullInfo.fullName}</div>
               </div>
               <img
                 className="w-10 h-10 rounded-full"
-                src={user.photoURL}
+                src={userFullInfo.imageURL}
                 alt=""
               />
             </div>

@@ -6,7 +6,8 @@ import { getDocs } from "firebase/firestore";
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { deleteDoc } from "firebase/firestore";
 import { deleteObject } from "firebase/storage";
-import {  query, where } from "firebase/firestore";
+import { query, where } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -108,15 +109,61 @@ async function getUsers() {
 
 
 
-async function getSigleUserDetail(uid){
-  const q = query(collection(db, "users"), where(uid, "==", true));
+async function getActiveUSer() {
+  await onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/auth.user
+      const uid = user.uid;
+   
 
-const querySnapshot = await getDocs(q);
-querySnapshot.forEach((doc) => {
-  // doc.data() is never undefined for query doc snapshots
-  console.log(doc.id, " => ", doc.data());
-});
+
+      // ...
+    } else {
+      // User is signed out
+      // ...
+    }
+  });
+ 
 }
 
+async function getOne(id) {
 
-export { addBlogPost, getPost, AddUser, LoginWithUSer, getUsers , getSigleUserDetail};
+
+ const uid = "uid"
+ const at = "oyxl6XIjBHVpqSgbhf7009bIyTv2"
+ const data = {}
+  try {
+    const q = query(collection(db, "users"), where(uid, "==", id));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+    
+     const get = doc.data()
+Object.assign(data , get)
+   
+    });
+
+    return data
+    
+   
+  } catch (error) {
+    console.error("Error fetching user details:", error.message);
+    // You can handle the error appropriately, such as logging, displaying a message, or throwing it further.
+  }
+
+ 
+
+}
+
+getActiveUSer();
+
+export {
+  addBlogPost,
+  getPost,
+  AddUser,
+  LoginWithUSer,
+  getUsers,
+  getOne
+};
