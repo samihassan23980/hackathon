@@ -14,6 +14,7 @@ import { AiFillMessage } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import { addBlogPost,  getOne,  getUsers } from "@/Api/firebase/page";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 function Aside() {
   const [text, setText] = useState("");
@@ -23,6 +24,7 @@ function Aside() {
   const [currentUser, setCurrentUser] = useState("");
   const [userFullInfo , setUserInfo] = useState("")
   const auth = getAuth();
+  const router = useRouter()
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -176,7 +178,7 @@ function Aside() {
               <ul className="max-w-md divide-y divide-gray-200 dark:divide-gray-700">
                 {allUsers.map((item, index) => {
                   return (
-                    <li key={index} className="pb-3 sm:pb-4">
+                    <li key={index} onClick={()=>router.push("/dashboard/"+item.uid)} className="pb-3 sm:pb-4">
                       <div className="flex items-center space-x-4 rtl:space-x-reverse">
                         <div className="flex-shrink-0">
                           <img

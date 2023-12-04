@@ -159,11 +159,55 @@ Object.assign(data , get)
 
 getActiveUSer();
 
+
+
+async function sendMessageInDb(message, activeUSer, jisBhaikoSendKIa , fullName) {
+
+  
+  try{
+  const docRef = await addDoc(collection(db, "chats"), {
+    message ,
+    activeUSer,
+    jisBhaikoSendKIa,
+    jiskosendkisuskaname : fullName,
+  });
+  alert("message send sucees")
+}
+catch(e){
+  console.log(e.message)
+}
+}
+
+
+async function getChatsInDB(id){
+  const uid = "jisBhaikoSendKIa"
+ const at = id
+ const data = []
+  try {
+    const q = query(collection(db, "chats"), where(uid, "==", at));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+    data.push(doc.data())
+    });
+
+    return data
+    
+   
+  } catch (error) {
+    console.error("Error fetching user details:", error.message);
+    // You can handle the error appropriately, such as logging, displaying a message, or throwing it further.
+  }
+}
+
 export {
   addBlogPost,
   getPost,
   AddUser,
   LoginWithUSer,
   getUsers,
-  getOne
+  getOne,
+  sendMessageInDb,
+  getChatsInDB
 };
